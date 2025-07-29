@@ -15,7 +15,7 @@ import java.util.List;
 import static org.testng.Assert.assertTrue;
 
 public class NhsJobSearchSteps {
-    WebDriver driver = Base.getWebdriver();
+    WebDriver driver = Base.getWebdriver("edge");
 
     private String jobTitle;
     private String city;
