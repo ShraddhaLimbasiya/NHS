@@ -1,11 +1,17 @@
 package pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
 import java.util.List;
 
 
@@ -13,8 +19,9 @@ public class NhsJobSearchPage {
 
     WebDriver driver;
 
-    public void NhsJobSearchPage(WebDriver driver) {
+    public NhsJobSearchPage(WebDriver driver) {
         this.driver = driver;
+        PageFactory.initElements(driver, this);
     }
 
     @FindBy(name = "keyword")
@@ -40,13 +47,13 @@ public class NhsJobSearchPage {
     }
 
     public boolean resultsMatchPreferences(String jobTitle, String city) {
-        List<WebElement> jobCards = driver.findElements(By.cssSelector(".job-listing")); // adjust as needed
+        List<WebElement> jobCards = driver.findElements(By.className("nhsuk-list-panel search-result nhsuk-u-padding-3")); // adjust as needed
         if (jobCards.isEmpty()) {
             return false;
         }
         for (WebElement job : jobCards) {
             String jobText = job.getText().toLowerCase();
-            if (!jobText.contains(jobTitle.toLowerCase()) && !jobText.contains(city.toLowerCase())) {
+            if (!jobText.contains(jobTitle.toLowerCase()) || !jobText.contains(city.toLowerCase())) {
                 return false;
             }
         }
@@ -55,8 +62,18 @@ public class NhsJobSearchPage {
     }
 
     public void sortBy(String optionText) {
-        Select dropdown = new Select(sortBy);
-        dropdown.selectByVisibleText(optionText);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+        By sortDropdownBy = By.cssSelector("select[name='sort']");  // or replace with correct one
+        WebElement dropdown = wait.until(ExpectedConditions.visibilityOfElementLocated(sortDropdownBy));
+
+        // Scroll into view
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", dropdown);
+
+        // Interact with the dropdown
+        Select select = new Select(dropdown);
+        select.selectByVisibleText(optionText);
     }
+
 
 }
