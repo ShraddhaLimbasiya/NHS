@@ -7,5 +7,5 @@ Feature: NHS Job Search functionality
     Then I should see a list of job results that match my preferences
     And I should be able to sort results by "Date Posted (newest)"
     Examples:
-      | JobTitle | City |
-    |Nurse     |London|
+      | JobTitle | City   |
+      | Data Analyst    | London |

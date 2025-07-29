@@ -46,31 +46,35 @@ public class NhsJobSearchPage {
         searchBtn.click();
     }
 
-    public boolean resultsMatchPreferences(String jobTitle, String city) {
-        List<WebElement> jobCards = driver.findElements(By.className("nhsuk-list-panel search-result nhsuk-u-padding-3")); // adjust as needed
+    public boolean resultsMatchPreferences(String expectedTitle, String expectedLocation) {
+        List<WebElement> jobCards = driver.findElements(By.cssSelector("li[data-test='search-result']"));
+
         if (jobCards.isEmpty()) {
             return false;
         }
+
         for (WebElement job : jobCards) {
-            String jobText = job.getText().toLowerCase();
-            if (!jobText.contains(jobTitle.toLowerCase()) || !jobText.contains(city.toLowerCase())) {
-                return false;
+            String actualTitle = job.findElement(By.cssSelector("a[data-test='search-result-job-title']")).getText().toLowerCase();
+            String actualLocation = job.findElement(By.cssSelector("div[data-test='search-result-location'] h3 > div")).getText().toLowerCase();
+
+            if (actualTitle.contains(expectedTitle.toLowerCase()) && actualLocation.contains(expectedLocation.toLowerCase())) {
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
+
+
 
     public void sortBy(String optionText) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-        By sortDropdownBy = By.cssSelector("select[name='sort']");  // or replace with correct one
+        By sortDropdownBy = By.cssSelector("select[name='sort']");
         WebElement dropdown = wait.until(ExpectedConditions.visibilityOfElementLocated(sortDropdownBy));
 
-        // Scroll into view
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", dropdown);
 
-        // Interact with the dropdown
         Select select = new Select(dropdown);
         select.selectByVisibleText(optionText);
     }

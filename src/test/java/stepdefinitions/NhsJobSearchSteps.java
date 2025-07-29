@@ -6,6 +6,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.openqa.selenium.WebDriver;
+import org.testng.Assert;
 import pages.NhsJobSearchPage;
 
 public class NhsJobSearchSteps {
@@ -36,12 +37,14 @@ public class NhsJobSearchSteps {
 
     @Then("I should see a list of job results that match my preferences")
     public void iShouldSeeAListOfJobResultsThatMatchMyPreferences() {
-        //assert nhsJobSearchPage.resultsMatchPreferences(jobTitle, city);
+        Assert.assertTrue(nhsJobSearchPage.resultsMatchPreferences(jobTitle, city), "No job result matches expected title and location.");
 
     }
 
-    @And("I should be able to sort results by {string}")
+    @Then("I should be able to sort results by {string}")
     public void iShouldBeAbleToSortResultsBy(String option) {
         nhsJobSearchPage.sortBy(option);
     }
+
+
 }
