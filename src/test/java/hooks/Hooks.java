@@ -12,6 +12,6 @@ public class Hooks {
 
     @After
     public void tearDown() {
-        Base.getWebdriver();  // quits driver
+        Base.tearDown();  // quits driver
     }
 }

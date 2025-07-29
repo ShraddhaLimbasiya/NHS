@@ -33,9 +33,6 @@ public class NhsJobSearchPage {
     @FindBy(id = "search")
     private WebElement searchBtn;
 
-    @FindBy(name = "sort")
-    private WebElement sortBy;
-
 
     public void enterSearchData(String title, String preferedLocation) {
         jobTitle.sendKeys(title);

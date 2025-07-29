@@ -3,6 +3,7 @@ package hooks;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.AfterMethod;
 
 public class Base {
 
@@ -17,8 +18,7 @@ public class Base {
         return driver;
     }
 
-
-    public void tearDown(){
+    public static void tearDown(){
         if(driver != null){
             driver.quit();
         }

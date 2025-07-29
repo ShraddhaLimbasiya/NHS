@@ -4,7 +4,7 @@ import io.cucumber.testng.AbstractTestNGCucumberTests;
 import io.cucumber.testng.CucumberOptions;
 
 @CucumberOptions(features = "src/test/resources/features/NhsJobSearch.feature",
-        glue = "stepdefinitions",
+        glue = {"stepdefinitions", "hooks/Hooks"},
         plugin = {
                 "pretty",
                 "html:target/cucumber-report.html",
