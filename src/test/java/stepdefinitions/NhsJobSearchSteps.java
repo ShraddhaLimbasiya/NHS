@@ -9,6 +9,11 @@ import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 import pages.NhsJobSearchPage;
 
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.testng.Assert.assertTrue;
+
 public class NhsJobSearchSteps {
     WebDriver driver = Base.getWebdriver();
 
@@ -37,7 +42,7 @@ public class NhsJobSearchSteps {
 
     @Then("I should see a list of job results that match my preferences")
     public void iShouldSeeAListOfJobResultsThatMatchMyPreferences() {
-        Assert.assertTrue(nhsJobSearchPage.resultsMatchPreferences(jobTitle, city), "No job result matches expected title and location.");
+        assertTrue(nhsJobSearchPage.resultsMatchPreferences(jobTitle, city), "No job result matches expected title and location.");
 
     }
 
@@ -47,4 +52,10 @@ public class NhsJobSearchSteps {
     }
 
 
+    @Then("the jobs should be sorted by newest Date Posted")
+    public void theJobsShouldBeSortedByNewestDatePosted() {
+        List<LocalDate> postedDates = nhsJobSearchPage.getPostedDates();
+        assertTrue(nhsJobSearchPage.isSortedDescending(postedDates), "Job results are not sorted by newest date posted");
+
+    }
 }

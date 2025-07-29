@@ -12,6 +12,10 @@ import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -63,7 +67,6 @@ public class NhsJobSearchPage {
     }
 
 
-
     public void sortBy(String optionText) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
@@ -76,5 +79,28 @@ public class NhsJobSearchPage {
         select.selectByVisibleText(optionText);
     }
 
+    public List<LocalDate> getPostedDates() {
+        List<LocalDate> dates = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy");
 
+        List<WebElement> dateElements = driver.findElements(By.cssSelector("li[data-test='search-result'] div[data-test='search-result-posted-date']"));
+
+        for (WebElement dateElement : dateElements) {
+            try {
+                String text = dateElement.getText().replace("Posted", "").trim();
+                LocalDate date = LocalDate.parse(text, formatter);
+                dates.add(date);
+            } catch (Exception e) {
+                System.out.println("Date parsing failed for: " + dateElement.getText());
+            }
+        }
+
+        return dates;
+    }
+
+    public boolean isSortedDescending(List<LocalDate> dates) {
+        List<LocalDate> sorted = new ArrayList<>(dates);
+        sorted.sort(Collections.reverseOrder());
+        return dates.equals(sorted);
+    }
 }

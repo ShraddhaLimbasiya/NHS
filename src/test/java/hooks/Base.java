@@ -9,8 +9,9 @@ public class Base {
 
     private static WebDriver driver;
 
-    public static WebDriver getWebdriver(){
+    public static WebDriver getWebdriver() {
         if (driver == null) {
+
             WebDriverManager.chromedriver().setup();
             driver = new ChromeDriver();
             driver.manage().window().maximize();
@@ -18,8 +19,8 @@ public class Base {
         return driver;
     }
 
-    public static void tearDown(){
-        if(driver != null){
+    public static void tearDown() {
+        if (driver != null) {
             driver.quit();
         }
     }
