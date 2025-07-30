@@ -27,16 +27,17 @@ Feature: NHS Job Search functionality
     Given I am on the NHS Jobs search page
     When I enter "Manchester" in the Location field
     And I click the search button
-    Then I should see job results that match my preferences
+    Then I should see a list of job results that match my preferences
 
   Scenario: Search with no input
     Given I am on the NHS Jobs search page
     When I click the search button
-    Then I should see a list of all recent jobs sorted by newest Date Posted
+    And I should be able to sort results by "Date Posted (newest)"
+    Then the jobs should be sorted by newest Date Posted
 
   Scenario: Search with invalid job title
     Given I am on the NHS Jobs search page
-    When I enter "@@##$%" in the Job title field
+    When I enter "@@##$%" in the Jobtitle field
     And I click the search button
     Then I should see a message indicating no results were found
 

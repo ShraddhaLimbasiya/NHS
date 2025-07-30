@@ -7,11 +7,11 @@ public class Hooks {
 
     @Before
     public void setUp() {
-        Base.getWebdriver("edge");  // initializes driver
+        Base.getWebdriver("edge");
     }
 
     @After
     public void tearDown() {
-        Base.tearDown();  // quits driver
+        Base.tearDown();
     }
 }
