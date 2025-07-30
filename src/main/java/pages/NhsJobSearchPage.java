@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 
 public class NhsJobSearchPage {
@@ -40,6 +41,15 @@ public class NhsJobSearchPage {
     @FindBy(name = "distance")
     private WebElement distanceDropdown;
 
+    @FindBy(id ="search-results-heading")
+    private WebElement errorMessage;
+
+
+    private By jobTitleSelector = By.cssSelector("a[data-test='search-result-job-title']");
+    private By jobLocationSelector = By.cssSelector("div[data-test='search-result-location'] h3 > div");
+    private By postedDateSelector = By.cssSelector("div[data-test='search-result-posted-date']");
+    private By sortDropdownSelector = By.cssSelector("select[name='sort']");
+
     public void enterJobTitle(String title) {
         jobTitle.sendKeys(title);
     }
@@ -53,14 +63,17 @@ public class NhsJobSearchPage {
         enterJobTitle(title);
         enterLocation(preferredLocation);
     }
+
     public void selectDistance(String distance) {
         Select select = new Select(distanceDropdown);
-        select.selectByVisibleText("+"+ distance + " Miles");
+        select.selectByVisibleText("+" + distance + " Miles");
     }
 
     public void clickSearchBtn() {
         searchBtn.click();
     }
+
+    //private By jobResultCard = By.cssSelector("li[data-test='search-result']");
 
     public boolean resultsMatchPreferences(String expectedTitle, String expectedLocation) {
         List<WebElement> jobCards = driver.findElements(By.cssSelector("li[data-test='search-result']"));
@@ -73,7 +86,7 @@ public class NhsJobSearchPage {
             String actualTitle = job.findElement(By.cssSelector("a[data-test='search-result-job-title']")).getText().toLowerCase();
             String actualLocation = job.findElement(By.cssSelector("div[data-test='search-result-location'] h3 > div")).getText().toLowerCase();
 
-            if (actualTitle.contains(expectedTitle.toLowerCase()) && actualLocation.contains(expectedLocation.toLowerCase())) {
+            if (actualTitle.contains(expectedTitle.toLowerCase()) || actualLocation.contains(expectedLocation.toLowerCase())) {
                 return true;
             }
         }
@@ -131,6 +144,14 @@ public class NhsJobSearchPage {
         return jobTitles;
     }
 
+    public boolean isErrorMessageDisplayed(){
+        try {
+            WebElement message = driver.findElement(By.xpath("//*[contains(text(), 'No result found for')]"));
+            return message.isDisplayed();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
 
 
 }

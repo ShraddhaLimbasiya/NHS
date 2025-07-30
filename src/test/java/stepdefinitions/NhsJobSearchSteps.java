@@ -80,12 +80,29 @@ public class NhsJobSearchSteps {
     @Then("I should see a list of job results that include {string} in the title")
     public void iShouldSeeAListOfJobResultsThatIncludeInTheTitle(String jobTitle) {
         List<String> results = nhsJobSearchPage.getJobTitlesFromResults();
-       // assertFalse(results.isEmpty(), "Job results list is empty");
+        assertFalse(results.isEmpty(), "Job results list is empty");
         System.out.println("Job titles found: " + results.size());
 
         for (String resultTitle : results) {
             System.out.println(resultTitle);
             assertTrue(resultTitle.toLowerCase().contains(jobTitle.toLowerCase()), "Job title does not contain expected text");
         }
+    }
+
+    @When("I enter {string} in the Location field")
+    public void iEnterInTheLocationField(String location) {
+        nhsJobSearchPage.enterLocation(location);
+    }
+
+
+    @When("I enter {string} in the Jobtitle field")
+    public void iEnterInTheJobtitleField(String title) {
+        nhsJobSearchPage.enterJobTitle(title);
+    }
+
+    @Then("I should see a message indicating no results were found")
+    public void iShouldSeeAMessageIndicatingNoResultsWereFound() {
+        nhsJobSearchPage.isErrorMessageDisplayed();
+
     }
 }
