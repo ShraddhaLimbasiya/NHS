@@ -6,7 +6,6 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.openqa.selenium.WebDriver;
-import org.testng.Assert;
 import pages.NhsJobSearchPage;
 
 import java.time.LocalDate;
@@ -35,6 +34,12 @@ public class NhsJobSearchSteps {
         this.city = location;
     }
 
+    @And("I enter the distance as {string} in the distance")
+    public void iEnterTheDistanceAsInTheDistance(String distance) {
+        nhsJobSearchPage.selectDistance(distance);
+
+    }
+
     @And("I click the search button")
     public void iClickTheSearchButton() {
         nhsJobSearchPage.clickSearchBtn();
@@ -46,7 +51,7 @@ public class NhsJobSearchSteps {
 
     }
 
-    @Then("I should be able to sort results by {string}")
+    @And("I should be able to sort results by {string}")
     public void iShouldBeAbleToSortResultsBy(String option) {
         nhsJobSearchPage.sortBy(option);
     }
@@ -57,5 +62,26 @@ public class NhsJobSearchSteps {
         List<LocalDate> postedDates = nhsJobSearchPage.getPostedDates();
         assertTrue(nhsJobSearchPage.isSortedDescending(postedDates), "Job results are not sorted by newest date posted");
 
+    }
+
+
+    @When("I enter {string} in the Job Title field")
+    public void iEnterInTheJobTitleField(String jobTitle) {
+        nhsJobSearchPage.enterJobTitle(jobTitle);
+
+    }
+
+    @And("I leave the Location field empty")
+    public void iLeaveTheLocationFieldEmpty() {
+        nhsJobSearchPage.enterLocation("");
+    }
+
+    @Then("I should see a list of job results that include {string} in the title")
+    public void iShouldSeeAListOfJobResultsThatIncludeInTheTitle(String jobTitle) {
+        List<String> results = nhsJobSearchPage.getJobTitlesFromResults();
+        System.out.printf(String.valueOf(results));
+        for (String resultTitle : results) {
+            assertTrue(resultTitle.toLowerCase().contains(jobTitle.toLowerCase()), "Job title does not contain expected text");
+        }
     }
 }

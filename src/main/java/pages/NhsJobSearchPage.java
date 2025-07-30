@@ -37,10 +37,25 @@ public class NhsJobSearchPage {
     @FindBy(id = "search")
     private WebElement searchBtn;
 
+    @FindBy(name = "distance")
+    private WebElement distanceDropdown;
 
-    public void enterSearchData(String title, String preferedLocation) {
+    public void enterJobTitle(String title) {
         jobTitle.sendKeys(title);
-        location.sendKeys(preferedLocation);
+    }
+
+    public void enterLocation(String preferredLocation) {
+        location.sendKeys(preferredLocation);
+
+    }
+
+    public void enterSearchData(String title, String preferredLocation) {
+        enterJobTitle(title);
+        enterLocation(preferredLocation);
+    }
+    public void selectDistance(String distance) {
+        Select select = new Select(distanceDropdown);
+        select.selectByVisibleText("+"+ distance + " Miles");
     }
 
     public void clickSearchBtn() {
@@ -103,4 +118,18 @@ public class NhsJobSearchPage {
         sorted.sort(Collections.reverseOrder());
         return dates.equals(sorted);
     }
+
+
+    public List<String> getJobTitlesFromResults() {
+        List<WebElement> jobTitleElements = driver.findElements(By.cssSelector(".job-title"));
+        List<String> jobTitles = new ArrayList<>();
+
+        for (WebElement element : jobTitleElements) {
+            jobTitles.add(element.getText().trim());
+        }
+
+        return jobTitles;
+    }
+
+
 }
