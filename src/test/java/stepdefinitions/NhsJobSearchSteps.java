@@ -1,3 +1,4 @@
+
 package stepdefinitions;
 
 import hooks.Base;
@@ -80,7 +81,7 @@ public class NhsJobSearchSteps {
     @Then("I should see a list of job results that include {string} in the title")
     public void iShouldSeeAListOfJobResultsThatIncludeInTheTitle(String jobTitle) {
         List<String> results = nhsJobSearchPage.getJobTitlesFromResults();
-       // assertFalse(results.isEmpty(), "Job results list is empty");
+        // assertFalse(results.isEmpty(), "Job results list is empty");
         System.out.println("Job titles found: " + results.size());
 
         for (String resultTitle : results) {
