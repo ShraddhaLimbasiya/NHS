@@ -11,6 +11,7 @@ import pages.NhsJobSearchPage;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 public class NhsJobSearchSteps {
@@ -79,8 +80,11 @@ public class NhsJobSearchSteps {
     @Then("I should see a list of job results that include {string} in the title")
     public void iShouldSeeAListOfJobResultsThatIncludeInTheTitle(String jobTitle) {
         List<String> results = nhsJobSearchPage.getJobTitlesFromResults();
-        System.out.printf(String.valueOf(results));
+       // assertFalse(results.isEmpty(), "Job results list is empty");
+        System.out.println("Job titles found: " + results.size());
+
         for (String resultTitle : results) {
+            System.out.println(resultTitle);
             assertTrue(resultTitle.toLowerCase().contains(jobTitle.toLowerCase()), "Job title does not contain expected text");
         }
     }

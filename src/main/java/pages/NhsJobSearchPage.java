@@ -121,7 +121,7 @@ public class NhsJobSearchPage {
 
 
     public List<String> getJobTitlesFromResults() {
-        List<WebElement> jobTitleElements = driver.findElements(By.cssSelector(".job-title"));
+        List<WebElement> jobTitleElements = driver.findElements(By.cssSelector("a[data-test='search-result-job-title']"));
         List<String> jobTitles = new ArrayList<>();
 
         for (WebElement element : jobTitleElements) {
@@ -130,6 +130,7 @@ public class NhsJobSearchPage {
 
         return jobTitles;
     }
+
 
 
 }
