@@ -95,14 +95,14 @@ public class NhsJobSearchSteps {
     }
 
 
-    @When("I enter {string} in the Jobtitle field")
-    public void iEnterInTheJobtitleField(String title) {
-        nhsJobSearchPage.enterJobTitle(title);
+    @When("I enter special characters {string} in the Job title field")
+    public void iEnterSpecialCharactersInTheJobTitleField(String specialCharacters) {
+        nhsJobSearchPage.enterJobTitle(specialCharacters);
     }
 
     @Then("I should see a message indicating no results were found")
     public void iShouldSeeAMessageIndicatingNoResultsWereFound() {
-        nhsJobSearchPage.isErrorMessageDisplayed();
+        assertTrue(nhsJobSearchPage.isErrorMessageDisplayed(), "Expected 'no results' message was not displayed.");
 
     }
 }

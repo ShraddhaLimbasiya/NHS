@@ -35,9 +35,9 @@ Feature: NHS Job Search functionality
     And I should be able to sort results by "Date Posted (newest)"
     Then the jobs should be sorted by newest Date Posted
 
-  Scenario: Search with invalid job title
+  Scenario: Search with invalid job title as special characters
     Given I am on the NHS Jobs search page
-    When I enter "@@##$%" in the Jobtitle field
+    When I enter special characters "@@##$%" in the Job title field
     And I click the search button
     Then I should see a message indicating no results were found
 
