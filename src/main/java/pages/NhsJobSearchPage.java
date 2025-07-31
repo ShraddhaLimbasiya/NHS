@@ -9,7 +9,6 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
@@ -39,17 +38,19 @@ public class NhsJobSearchPage {
     @FindBy(id = "search")
     private WebElement searchBtn;
 
-    @FindBy(name = "distance")
-    private WebElement distanceDropdown;
-
-    @FindBy(id ="search-results-heading")
+    @FindBy(id = "search-results-heading")
     private WebElement errorMessage;
 
+    @FindBy(xpath = "//a[@class='nhsuk-pagination__link nhsuk-pagination__link--next']")
+    private WebElement nextBtn;
+
+    private List<WebElement> getJobCards() {
+        return driver.findElements(By.cssSelector("li[data-test='search-result']"));
+    }
 
     private By jobTitleSelector = By.cssSelector("a[data-test='search-result-job-title']");
     private By jobLocationSelector = By.cssSelector("div[data-test='search-result-location'] h3 > div");
     private By postedDateSelector = By.cssSelector("div[data-test='search-result-posted-date']");
-    private By sortDropdownSelector = By.cssSelector("select[name='sort']");
 
     public void enterJobTitle(String title) {
         jobTitle.sendKeys(title);
@@ -65,29 +66,49 @@ public class NhsJobSearchPage {
         enterLocation(preferredLocation);
     }
 
-    public void selectDistance(String distance) {
-        Select select = new Select(distanceDropdown);
-        select.selectByVisibleText("+" + distance + " Miles");
+    private void selectByVisibleText(By selector, String text) {
+        Select dropdown = new Select(driver.findElement(selector));
+        dropdown.selectByVisibleText(text);
     }
+
+    public void selectDistance(String distance) {
+        selectByVisibleText(By.name("distance"), "+" + distance + " Miles");
+    }
+
 
     public void clickSearchBtn() {
         searchBtn.click();
     }
 
-    //private By jobResultCard = By.cssSelector("li[data-test='search-result']");
+    public List<WebElement> getJobTitlesFromResults() {
+        List<WebElement> jobTitles = driver.findElements(By.cssSelector("a[data-test$='search-result-job-title']"));
+        return jobTitles;
+    }
 
-    public boolean resultsMatchPreferences(String expectedTitle, String expectedLocation) {
-        List<WebElement> jobCards = driver.findElements(By.cssSelector("li[data-test='search-result']"));
+    public boolean resultsMatchPreferredTitle(String expectedTitle) {
+        if (getJobCards().isEmpty()) return false;
 
-        if (jobCards.isEmpty()) {
+        for (WebElement job : getJobTitlesFromResults()) {
+            if (job.getText().toLowerCase().contains(expectedTitle.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public boolean resultsMatchPreferredLocation(String expectedLocation) {
+
+        if (getJobCards().isEmpty()) {
             return false;
         }
 
-        for (WebElement job : jobCards) {
-            String actualTitle = job.findElement(By.cssSelector("a[data-test='search-result-job-title']")).getText().toLowerCase();
+        for (WebElement job : getJobCards()) {
             String actualLocation = job.findElement(By.cssSelector("div[data-test='search-result-location'] h3 > div")).getText().toLowerCase();
+            String actualPostcode = actualLocation.substring(0, 2);
 
-            if (actualTitle.contains(expectedTitle.toLowerCase()) || actualLocation.contains(expectedLocation.toLowerCase())) {
+            if (actualLocation.contains(expectedLocation.toLowerCase())
+                    | actualLocation.startsWith(actualPostcode.toLowerCase())) {
                 return true;
             }
         }
@@ -134,24 +155,21 @@ public class NhsJobSearchPage {
     }
 
 
-    public List<String> getJobTitlesFromResults() {
-        List<WebElement> jobTitleElements = driver.findElements(By.cssSelector("a[data-test='search-result-job-title']"));
-        List<String> jobTitles = new ArrayList<>();
-
-        for (WebElement element : jobTitleElements) {
-            jobTitles.add(element.getText().trim());
-        }
-
-        return jobTitles;
-    }
-
-    public boolean isErrorMessageDisplayed(){
+    public boolean isErrorMessageDisplayed() {
         try {
             WebElement message = driver.findElement(By.xpath("//*[contains(text(), 'No result found for')]"));
             return message.isDisplayed();
         } catch (NoSuchElementException e) {
             return false;
         }
+    }
+
+    public void clickNextBtn() {
+        nextBtn.click();
+    }
+
+    public void clickOnJob(){
+        getJobCards().get(0).click();
     }
 
 

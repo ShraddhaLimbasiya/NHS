@@ -6,6 +6,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import pages.NhsJobSearchPage;
 
 import java.time.LocalDate;
@@ -15,7 +16,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 public class NhsJobSearchSteps {
-    WebDriver driver = Base.getWebdriver("edge");
+    WebDriver driver = Base.getWebdriver("chrome");
 
     private String jobTitle;
     private String city;
@@ -48,8 +49,12 @@ public class NhsJobSearchSteps {
 
     @Then("I should see a list of job results that match my preferences")
     public void iShouldSeeAListOfJobResultsThatMatchMyPreferences() {
-        assertTrue(nhsJobSearchPage.resultsMatchPreferences(jobTitle, city), "No job result matches expected title and location.");
-
+        if(jobTitle!= null) {
+            assertTrue(nhsJobSearchPage.resultsMatchPreferredTitle(jobTitle), "No job result matches expected title and location.");
+        }
+        else if(city != null){
+            assertTrue(nhsJobSearchPage.resultsMatchPreferredLocation(city),"No location match");
+        }
     }
 
     @And("I should be able to sort results by {string}")
@@ -79,14 +84,14 @@ public class NhsJobSearchSteps {
 
     @Then("I should see a list of job results that include {string} in the title")
     public void iShouldSeeAListOfJobResultsThatIncludeInTheTitle(String jobTitle) {
-        List<String> results = nhsJobSearchPage.getJobTitlesFromResults();
+        List<WebElement> results = nhsJobSearchPage.getJobTitlesFromResults();
         assertFalse(results.isEmpty(), "Job results list is empty");
-        System.out.println("Job titles found: " + results.size());
 
-        for (String resultTitle : results) {
-            System.out.println(resultTitle);
-            assertTrue(resultTitle.toLowerCase().contains(jobTitle.toLowerCase()), "Job title does not contain expected text");
+        for (WebElement resultTitle : results) {
+            System.out.println(resultTitle.getText());
+            assertTrue(resultTitle.getText().toLowerCase().contains(jobTitle.toLowerCase()), "Job title does not contain expected text");
         }
+
     }
 
     @When("I enter {string} in the Location field")
@@ -103,6 +108,48 @@ public class NhsJobSearchSteps {
     @Then("I should see a message indicating no results were found")
     public void iShouldSeeAMessageIndicatingNoResultsWereFound() {
         assertTrue(nhsJobSearchPage.isErrorMessageDisplayed(), "Expected 'no results' message was not displayed.");
+
+    }
+
+    @When("I enter non existent title as {string} in the Job title field")
+    public void iEnterNonExistentTitleAsInTheJobTitleField(String nonExistentTitle) {
+        nhsJobSearchPage.enterJobTitle(nonExistentTitle);
+    }
+
+    @When("I click to go to the second page")
+    public void iClickToGoToTheSecondPage() {
+        nhsJobSearchPage.clickNextBtn();
+
+    }
+
+    @And("I click on a job in the result list")
+    public void iClickOnAJobInTheResultList() {
+        nhsJobSearchPage.clickOnJob();
+    }
+
+    @Then("I should be taken to the job detail page")
+    public void iShouldBeTakenToTheJobDetailPage() {
+        String currentUrl = driver.getCurrentUrl();
+        assertTrue(currentUrl.contains("job") || currentUrl.contains("vacancy"), "Not navigated to job detail page.");
+    }
+
+    @And("I press the browser back button")
+    public void iPressTheBrowserBackButton() {
+        driver.navigate().back();
+
+    }
+
+    @Then("I should return to the same search results")
+    public void iShouldReturnToTheSameSearchResults() {
+        assertTrue(driver.getCurrentUrl().contains("search"), "Not returned to search results page.");
+        assertFalse(nhsJobSearchPage.getJobTitlesFromResults().isEmpty(), "Search results not visible after navigating back.");
+    }
+
+    @When("I enter {string} repeated {int} times in the Job title field")
+    public void iEnterRepeatedTimesInTheJobTitleField(String jobTitle, int number) {
+        String longTitle = jobTitle.repeat(number).trim();
+        nhsJobSearchPage.enterJobTitle(longTitle);
+
 
     }
 }

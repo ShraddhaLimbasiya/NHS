@@ -13,7 +13,6 @@ public class Base {
 
 
     public static WebDriver getWebdriver(String browser) {
-        WebDriver driver;
         if (browser.equalsIgnoreCase("chrome")) {
             WebDriverManager.chromedriver().setup();
             driver = new ChromeDriver();
@@ -36,7 +35,7 @@ public class Base {
 
 
     public static void tearDown() {
-        if (driver != null) {
+        if (driver!=null) {
             driver.quit();
         }
     }

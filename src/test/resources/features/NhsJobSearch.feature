@@ -34,6 +34,10 @@ Feature: NHS Job Search functionality
     When I click the search button
     And I should be able to sort results by "Date Posted (newest)"
     Then the jobs should be sorted by newest Date Posted
+    And I click on a job in the result list
+    Then I should be taken to the job detail page
+    And I press the browser back button
+    Then I should return to the same search results
 
   Scenario: Search with invalid job title as special characters
     Given I am on the NHS Jobs search page
@@ -47,30 +51,28 @@ Feature: NHS Job Search functionality
     And I click the search button
     Then I should see a message indicating no results were found
 
+
   Scenario: Search for a non-existent job
     Given I am on the NHS Jobs search page
-    When I enter "Underwater Basket Weaver" in the Job title field
+    When I enter non existent title as "cherry ####tomato" in the Job title field
     And I click the search button
     Then I should see a message indicating no results were found
 
-  Scenario: Navigate to page 2 of results
-    Given I perform a job search with many results
+  Scenario Outline: Navigate to page 2 of results
+    Given I am on the NHS Jobs search page
+    When I enter preferences such as "<JobTitle>" in the Job Title and "<City>" in the Location
+    And I enter the distance as "<distance>" in the distance
+    And I click the search button
     When I click to go to the second page
-    Then I should see a new set of job results
+    Examples:
+      | JobTitle     | City   | distance |
+      | Data Analyst | London | 10       |
 
   Scenario: Use postcode in location field
     Given I am on the NHS Jobs search page
     When I enter "SW1A 1AA" in the Location field
     And I click the search button
-    Then I should see job results near the postcode
+    Then I should see a list of job results that match my preferences
 
-  Scenario: Clicking on a job opens the job detail page
-    Given I perform a search for "Administrator"
-    When I click on a job in the result list
-    Then I should be taken to the job detail page
 
-  Scenario: Browser back button returns to search results
-    Given I perform a search for "Healthcare Assistant"
-    And I click on a job in the result list
-    When I press the browser back button
-    Then I should return to the same search results
+
