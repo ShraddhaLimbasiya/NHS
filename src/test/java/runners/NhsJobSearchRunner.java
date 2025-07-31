@@ -10,6 +10,7 @@ import io.cucumber.testng.CucumberOptions;
                 "html:target/cucumber-report.html",
                 "json:target/cucumber.json"
         },
+        //tags = "@only" ,
         monochrome = true
 )
 public class NhsJobSearchRunner extends AbstractTestNGCucumberTests {
