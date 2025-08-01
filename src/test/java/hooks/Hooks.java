@@ -7,7 +7,7 @@ public class Hooks {
 
     @Before
     public void setUp() {
-        Base.getWebdriver("edge");
+        //Base.getWebdriver("edge");
     }
 
     @After

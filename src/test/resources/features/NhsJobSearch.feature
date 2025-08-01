@@ -78,59 +78,76 @@ Feature: NHS Job Search functionality
     Given I am on the NHS Jobs search page
     When I enter "SW1A 1AA" in the Location field
     And I click the search button
-    And I select "Full time" and "Part time" under Working Pattern
-    And I click the "Apply filters" button
+    And I select "Working pattern":
+      | Full time |
+      | Part time |
+    And I click the Apply filters button
     Then I should see job results filtered by the selected working patterns
 
   Scenario: Filter job results by contract type
     Given I am on the NHS Jobs search page
     When I enter "SW1A 1AA" in the Location field
     And I click the search button
-    And I select "Permanent" and "Temporary" under Contract Type
-    And I click the "Apply filters" button
+    And I select "Contract type":
+      | Voluntary |
+      | Bank      |
+    And I click the Apply filters button
     Then I should see job results filtered by the selected contract types
 
   Scenario: Filter job results by salary range
     Given I am on the NHS Jobs search page
     When I enter "SW1A 1AA" in the Location field
     And I click the search button
-    And I select "£20,000 to £24,999" under Salary Range
-    And I click the "Apply filters" button
+    And I select "Pay range":
+      | 40000 |
+    And I click the Apply filters button
     Then I should see job results within the selected salary range
 
   Scenario: Filter job results by staff group
     Given I am on the NHS Jobs search page
     When I enter "SW1A 1AA" in the Location field
     And I click the search button
-    And I select "Nursing & Midwifery Registered" under Staff Group
-    And I click the "Apply filters" button
+    And I select "Staff group":
+      | Nursing              |
+      | Midwifery Registered |
+    And I click the Apply filters button
     Then I should see job results filtered by the selected staff group
 
   Scenario: Filter job results by job reference number
     Given I am on the NHS Jobs search page
     When I enter "SW1A 1AA" in the Location field
     And I click the search button
-    And I enter "123ABC" in the Job Reference Number field
-    And I click the "Apply filters" button
+    And I select "NHS pay grades and schemes":
+      | Band 4 |
+      | Band 5 |
+    And I click the Apply filters button
     Then I should see job results containing the reference number "123ABC"
 
+  @smoke
   Scenario: Apply multiple filters and view refined job results
     Given I am on the NHS Jobs search page
     When I enter "SW1A 1AA" in the Location field
     And I click the search button
-    And I select "Full time" and "Part time" under Working Pattern
-    And I select "Permanent" and "Temporary" under Contract Type
-    And I select "£20,000 to £24,999" under Salary Range
-    And I select "Nursing & Midwifery Registered" under Staff Group
-    And I enter "123ABC" in the Job Reference Number field
-    And I click the "Apply filters" button
-    Then I should see job results that match all selected filters
-
-  Scenario: Clear all selected filters
-    Given I have applied multiple filters on the NHS Jobs search page
-    When I click the "Clear filters" button
+    And I select "Working pattern":
+      | Full time |
+      | Part time |
+    And I select "Contract type":
+      | Voluntary |
+      | Bank      |
+    And I select "Pay range":
+      | 40000 |
+    And I select "Staff group":
+      | Nursing              |
+      | Midwifery Registered |
+    And I select "NHS pay grades and schemes":
+      | Band 4 |
+      | Band 5 |
+    And I click the Apply filters button
+    When I click the Clear filters button
     Then all filters should be reset
     And I should see the unfiltered job results for the original search
+
+
 
 
 

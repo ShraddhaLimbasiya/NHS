@@ -80,23 +80,26 @@ public class NhsJobSearchPage {
         searchBtn.click();
     }
 
-    public List<WebElement> getJobTitlesFromResults() {
-        List<WebElement> jobTitles = driver.findElements(By.cssSelector("a[data-test$='search-result-job-title']"));
-        return jobTitles;
-    }
+    public List<String> getJobTitlesFromResults(String keyword) {
+        List<WebElement> jobTitleElements = driver.findElements(By.cssSelector("a[data-test$='search-result-job-title']"));
+        List<String> jobTitles = new ArrayList<>();
 
-    public boolean resultsMatchPreferredTitle(String expectedTitle) {
-        if (getJobCards().isEmpty()) return false;
+        for (WebElement element : jobTitleElements) {
+            String title = element.getText();
+            jobTitles.add(title);
 
-        for (WebElement job : getJobTitlesFromResults()) {
-            if (job.getText().toLowerCase().contains(expectedTitle.toLowerCase())) {
-                return true;
+            if (title.toLowerCase().contains(keyword.toLowerCase())) {
+                System.out.println("Match found: " + title);
             }
         }
-        return false;
+
+        System.out.println("All Job Titles:");
+        for (String title : jobTitles) {
+            System.out.println(title);
+        }
+
+        return jobTitles;
     }
-
-
     public boolean resultsMatchPreferredLocation(String expectedLocation) {
 
         if (getJobCards().isEmpty()) {
@@ -171,6 +174,72 @@ public class NhsJobSearchPage {
     public void clickOnJob(){
         getJobCards().get(0).click();
     }
+
+    public boolean isJobDetailVisible() {
+        return driver.findElement(By.cssSelector("div[data-test='job-detail']")) != null;
+    }
+
+    //span[normalize-space()='Contract type']
+
+    public void selectCategory(String categoryName){
+        WebElement category = driver.findElement(By.xpath("//span[normalize-space()='"+ categoryName+"']"));
+        category.click();
+
+
+    }
+    public List<WebElement> getCheckboxesByCategory(String categoryName) {
+        String xpath = String.format("//input[@type='checkbox' and @name='%s']", categoryName);
+        return driver.findElements(By.xpath(xpath));
+    }
+
+    public void selectCheckBox(String categoryName, String... valuesToSelect) {
+        selectCategory(categoryName);
+        for (String value : valuesToSelect) {
+            boolean found = false;
+
+            String labelXpath = String.format("//details[.//span[normalize-space()='%s']]//label", categoryName);
+            List<WebElement> labels = driver.findElements(By.xpath(labelXpath));
+
+            for (WebElement label : labels) {
+                String labelText = label.getText().trim();
+
+                if (labelText.equalsIgnoreCase(value.trim())) {
+                    String forAttr = label.getAttribute("for");
+
+                    // Find checkbox using 'for' attribute
+                    WebElement checkbox = driver.findElement(By.id(forAttr));
+                    if (!checkbox.isSelected()) {
+                        checkbox.click();
+                        System.out.println("Selected: " + categoryName + " → " + labelText);
+                    } else {
+                        System.out.println("Already selected: " + labelText);
+                    }
+
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                System.out.println("Value not found: " + value + " in category " + categoryName);
+            }
+        }
+    }
+
+
+
+    public void iClickTheApplyFiltersButton() {
+        WebElement applyFilterBtn = driver.findElement(By.id("refine-search"));
+        applyFilterBtn.click();
+    }
+
+    public void iClickTheClearFiltersButton() {
+        WebElement clearFilterBtn = driver.findElement(By.xpath("//a[normalize-space()='Clear filters']"));
+        clearFilterBtn.click();
+    }
+
+
+
 
 
 }
