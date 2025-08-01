@@ -18,6 +18,8 @@ To run all tests (default browser is Chrome):
 ```bash
 mvn clean test
 
+---
+
 ## Project Structure
 
 As a jobseeker on the NHS Jobs website, 
@@ -29,8 +31,8 @@ This project automates the search functionality of the NHS Jobs website:
 
 ---
 
-**## Acceptance Criteria Covered
-**
+## Acceptance Criteria Covered
+
 - Search with job title and location preferences
 - Filter by distance
 - Sorting by "Date Posted (newest)"
@@ -77,7 +79,9 @@ src/
       |   └── runners/ 
       └── resources/
             └── features/ 
-            
+
+---
+
 ## Cross-Browser Compatibility
 
 Supports Chrome, Firefox and Edge
@@ -85,6 +89,7 @@ WebDriver binaries managed via WebDriverManager
 No need to install or maintain local driver binaries
 The browser can be changed by modifying the browser parameter in hooks 'Base.getWebdriver("chrome")'.
 
+---
 
 ## Test Reports
 
@@ -92,6 +97,8 @@ Cucumber HTML reports are generated after the test run.
 Default output location: `target/cucumber-reports.html`
 
 You can open this file in a browser to view test results.
+
+---
 
 ## Future Improvements
 
