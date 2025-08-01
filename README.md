@@ -14,6 +14,18 @@ This project automates the search functionality of the NHS Jobs website:
 🔗 https://www.jobs.nhs.uk/candidate/search
 
 ---
+## Cross-Browser Compatibility
+
+Supports Chrome, Firefox and Edge
+
+WebDriver binaries managed via WebDriverManager
+
+No need to install or maintain local driver binaries
+
+Change browser by modifying the parameter in:
+
+Base.getWebdriver("chrome")
+
 ### Command Line Execution
 
 To run all tests (default browser is Chrome):
@@ -80,14 +92,7 @@ src/
 - Chrome and Firefox browsers installed
 - Internet connection (to access NHS Jobs site and for WebDriverManager)
 
-## Cross-Browser Compatibility
 
-Supports Chrome, Firefox and Edge
-WebDriver binaries managed via WebDriverManager
-No need to install or maintain local driver binaries
-Change browser by modifying the parameter in:
-
-Base.getWebdriver("chrome")
 
 ## Test Reports
 
