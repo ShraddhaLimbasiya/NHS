@@ -18,8 +18,10 @@ To run all tests (default browser is Chrome):
 ```bash
 mvn clean test
 
-## Project Objective
+---
 
+**## Project Objective
+**
 As a jobseeker on the NHS Jobs website, 
 I want to search for a job with my preferences 
 so that I can get recently posted job results.
@@ -29,8 +31,8 @@ This project automates the search functionality of the NHS Jobs website:
 
 ---
 
-## Acceptance Criteria Covered
-
+**## Acceptance Criteria Covered
+**
 - Search with job title and location preferences
 - Filter by distance
 - Sorting by "Date Posted (newest)"
@@ -47,6 +49,7 @@ This project automates the search functionality of the NHS Jobs website:
 - Combined filter application
 - Clearing all filters
 
+---
 
 ## Tech Stack
 
@@ -61,6 +64,7 @@ This project automates the search functionality of the NHS Jobs website:
 | Build Tool         | Maven            |
 | Test Framework     | TestNG (or JUnit)|
 
+---
 
 ## Project Structure
 src/
