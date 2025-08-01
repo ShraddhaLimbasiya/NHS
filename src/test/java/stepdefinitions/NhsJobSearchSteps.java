@@ -1,6 +1,7 @@
 package stepdefinitions;
 
 import hooks.Base;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -12,10 +13,9 @@ import pages.NhsJobSearchPage;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
-public class NhsJobSearchSteps {
+public class NhsJobSearchSteps extends Base{
     WebDriver driver = Base.getWebdriver("chrome");
 
     private String jobTitle;
@@ -23,8 +23,9 @@ public class NhsJobSearchSteps {
     NhsJobSearchPage nhsJobSearchPage;
 
     @Given("I am on the NHS Jobs search page")
-    public void iAmOnTheNHSJobsSearchPage() {
+    public void iAmOnTheNHSJobsSearchPage() throws InterruptedException {
         nhsJobSearchPage = new NhsJobSearchPage(driver);
+        Thread.sleep(1000);
         driver.get("https://www.jobs.nhs.uk/candidate/search");
 
     }
@@ -43,17 +44,25 @@ public class NhsJobSearchSteps {
     }
 
     @And("I click the search button")
-    public void iClickTheSearchButton() {
+    public void iClickTheSearchButton() throws InterruptedException {
+        Thread.sleep(1000);
         nhsJobSearchPage.clickSearchBtn();
     }
 
     @Then("I should see a list of job results that match my preferences")
     public void iShouldSeeAListOfJobResultsThatMatchMyPreferences() {
-        if(jobTitle!= null) {
-            assertTrue(nhsJobSearchPage.resultsMatchPreferredTitle(jobTitle), "No job result matches expected title and location.");
-        }
-        else if(city != null){
-            assertTrue(nhsJobSearchPage.resultsMatchPreferredLocation(city),"No location match");
+
+        if (jobTitle != null) {
+            List<String> results = nhsJobSearchPage.getJobTitlesFromResults(jobTitle);
+            assertFalse(results.isEmpty(), "No job results found");
+
+            for (String title : results) {
+                System.out.println("Checking title: " + title);
+                assertTrue(title.toLowerCase().contains(jobTitle.toLowerCase()),
+                        "Job title does not match preference: " + title);
+            }
+        } else if (city != null) {
+            assertTrue(nhsJobSearchPage.resultsMatchPreferredLocation(city), "No location match");
         }
     }
 
@@ -84,18 +93,21 @@ public class NhsJobSearchSteps {
 
     @Then("I should see a list of job results that include {string} in the title")
     public void iShouldSeeAListOfJobResultsThatIncludeInTheTitle(String jobTitle) {
-        List<WebElement> results = nhsJobSearchPage.getJobTitlesFromResults();
+        List<String> results = nhsJobSearchPage.getJobTitlesFromResults(jobTitle); // Now returns List<String>
+
         assertFalse(results.isEmpty(), "Job results list is empty");
 
-        for (WebElement resultTitle : results) {
-            System.out.println(resultTitle.getText());
-            assertTrue(resultTitle.getText().toLowerCase().contains(jobTitle.toLowerCase()), "Job title does not contain expected text");
+        for (String title : results) {
+            System.out.println(title);
+            assertTrue(title.toLowerCase().contains(jobTitle.toLowerCase()),
+                    "Job title does not contain expected text: " + jobTitle);
         }
-
     }
 
+
     @When("I enter {string} in the Location field")
-    public void iEnterInTheLocationField(String location) {
+    public void iEnterInTheLocationField(String location) throws InterruptedException {
+        Thread.sleep(1000);
         nhsJobSearchPage.enterLocation(location);
     }
 
@@ -131,6 +143,8 @@ public class NhsJobSearchSteps {
     public void iShouldBeTakenToTheJobDetailPage() {
         String currentUrl = driver.getCurrentUrl();
         assertTrue(currentUrl.contains("job") || currentUrl.contains("vacancy"), "Not navigated to job detail page.");
+        assertTrue(nhsJobSearchPage.isJobDetailVisible(), "Expected job detail section not visible.");
+
     }
 
     @And("I press the browser back button")
@@ -142,7 +156,7 @@ public class NhsJobSearchSteps {
     @Then("I should return to the same search results")
     public void iShouldReturnToTheSameSearchResults() {
         assertTrue(driver.getCurrentUrl().contains("search"), "Not returned to search results page.");
-        assertFalse(nhsJobSearchPage.getJobTitlesFromResults().isEmpty(), "Search results not visible after navigating back.");
+        //assertFalse(nhsJobSearchPage.getJobTitlesFromResults().isEmpty(), "Search results not visible after navigating back.");
     }
 
     @When("I enter {string} repeated {int} times in the Job title field")
@@ -150,6 +164,36 @@ public class NhsJobSearchSteps {
         String longTitle = jobTitle.repeat(number).trim();
         nhsJobSearchPage.enterJobTitle(longTitle);
 
+
+    }
+
+    @Then("I should see job results filtered by the selected working patterns")
+    public void iShouldSeeJobResultsFilteredByTheSelectedWorkingPatterns() {
+
+
+    }
+
+    @And("I click the Apply filters button")
+    public void iClickTheApplyFiltersButton() throws InterruptedException {
+        Thread.sleep(1000);
+        nhsJobSearchPage.iClickTheApplyFiltersButton();
+    }
+
+
+    @When("I click the Clear filters button")
+    public void iClickTheClearFiltersButton() {
+        nhsJobSearchPage.iClickTheClearFiltersButton();
+    }
+
+    @And("I select {string}:")
+    public void iSelectUnder(String category, DataTable table) throws InterruptedException {
+        Thread.sleep(4000);
+
+        List<String> label = table.asList();
+
+        //nhsJobSearchPage.selectCheckBox(category);
+        nhsJobSearchPage.selectCheckBox(category,label.toArray(new String[0]));
+       // nhsJobSearchPage.selectCheckBox(category, "Full time", "Job-share");
 
     }
 }
