@@ -14,6 +14,12 @@ This project automates the search functionality of the NHS Jobs website:
 🔗 https://www.jobs.nhs.uk/candidate/search
 
 ---
+### Command Line Execution
+
+To run all tests (default browser is Chrome):
+
+mvn clean test
+
 
 ## Acceptance Criteria Covered
 
@@ -36,7 +42,7 @@ This project automates the search functionality of the NHS Jobs website:
 ---
 
 ## ⚙Tech Stack
-
+```bash
 | Tool/Framework     | Version          |
 |--------------------|------------------|
 | Java               | 21               |
@@ -47,11 +53,11 @@ This project automates the search functionality of the NHS Jobs website:
 | Browsers           | Chrome, Firefox  |
 | Build Tool         | Maven            |
 | Test Framework     | TestNG (or JUnit)|
-
+```
 ---
 
 ## Project Structure
-
+```bash
 src/
 ├── main/
 │   └── java/
@@ -66,7 +72,7 @@ src/
         └── features/              # Gherkin feature files
 
 ---
-
+```
 ### Prerequisites
 
 - Java 21 installed
@@ -104,14 +110,7 @@ Add edge cases and additional negative test scenarios
 
 Enable parallel test execution to speed up runs
 
-## Running the Tests
 
-### Command Line Execution
-
-To run all tests (default browser is Chrome):
-
-```bash
-mvn clean test
 
 
 
