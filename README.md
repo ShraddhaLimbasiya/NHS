@@ -18,10 +18,8 @@ To run all tests (default browser is Chrome):
 ```bash
 mvn clean test
 
----
+## Project Structure
 
-**## Project Objective
-**
 As a jobseeker on the NHS Jobs website, 
 I want to search for a job with my preferences 
 so that I can get recently posted job results.
