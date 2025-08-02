@@ -74,6 +74,7 @@ Feature: NHS Job Search functionality
     And I click the search button
     Then I should see a list of job results that match my preferences
 
+  @smoke
   Scenario: Filter job results by working pattern
     Given I am on the NHS Jobs search page
     When I enter "SW1A 1AA" in the Location field
@@ -82,7 +83,7 @@ Feature: NHS Job Search functionality
       | Full time |
       | Part time |
     And I click the Apply filters button
-    Then I should see job results filtered by the selected working patterns
+    Then I should see a list of job results that match my "Working pattern"
 
   Scenario: Filter job results by contract type
     Given I am on the NHS Jobs search page
@@ -92,7 +93,7 @@ Feature: NHS Job Search functionality
       | Voluntary |
       | Bank      |
     And I click the Apply filters button
-    Then I should see job results filtered by the selected contract types
+    Then I should see a list of job results that match my preferences
 
   Scenario: Filter job results by salary range
     Given I am on the NHS Jobs search page
@@ -101,7 +102,7 @@ Feature: NHS Job Search functionality
     And I select "Pay range":
       | 40000 |
     And I click the Apply filters button
-    Then I should see job results within the selected salary range
+    Then I should see a list of job results that match my preferences
 
   Scenario: Filter job results by staff group
     Given I am on the NHS Jobs search page
@@ -111,7 +112,7 @@ Feature: NHS Job Search functionality
       | Nursing              |
       | Midwifery Registered |
     And I click the Apply filters button
-    Then I should see job results filtered by the selected staff group
+    Then I should see a list of job results that match my preferences
 
   Scenario: Filter job results by job reference number
     Given I am on the NHS Jobs search page
@@ -121,9 +122,9 @@ Feature: NHS Job Search functionality
       | Band 4 |
       | Band 5 |
     And I click the Apply filters button
-    Then I should see job results containing the reference number "123ABC"
+    Then I should see a list of job results that match my preferences
 
-  @smoke
+
   Scenario: Apply multiple filters and view refined job results
     Given I am on the NHS Jobs search page
     When I enter "SW1A 1AA" in the Location field

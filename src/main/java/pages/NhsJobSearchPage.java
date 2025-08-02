@@ -14,10 +14,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 
 public class NhsJobSearchPage {
@@ -191,9 +188,14 @@ public class NhsJobSearchPage {
         String xpath = String.format("//input[@type='checkbox' and @name='%s']", categoryName);
         return driver.findElements(By.xpath(xpath));
     }
-
+    private Map<String, List<String>> selectedFilters = new HashMap<>();
+    public Map<String, List<String>> getSelectedFilters() {
+        return selectedFilters;
+    }
     public void selectCheckBox(String categoryName, String... valuesToSelect) {
         selectCategory(categoryName);
+        selectedFilters.put(categoryName, Arrays.asList(valuesToSelect));
+
         for (String value : valuesToSelect) {
             boolean found = false;
 
@@ -237,6 +239,54 @@ public class NhsJobSearchPage {
         WebElement clearFilterBtn = driver.findElement(By.xpath("//a[normalize-space()='Clear filters']"));
         clearFilterBtn.click();
     }
+
+    public List<String> getWorkingType(String keyword) {
+        //List<WebElement> workingTyps = getJobCards().findElements(By.xpath("(//strong[contains(text(),'"+keyword+"')])"));
+        List<String> jobTitles = new ArrayList<>();
+
+
+        for (WebElement element : getJobCards()) {
+            for(int i = 0; i<getJobCards().size() ; i++) {
+                WebElement workingType = element.findElement(By.xpath("(//strong[contains(text(),'" + keyword + "')][" + i + "])"));
+                String workingText = workingType.getText();
+                jobTitles.add(workingText);
+
+
+                if (workingText.toLowerCase().contains(keyword.toLowerCase())) {
+                    System.out.println("Match found: " + workingText);
+                }
+            }
+        }
+
+        System.out.println("All Job Working Type:");
+        for (String title : jobTitles) {
+            System.out.println(title);
+        }
+        return jobTitles;
+    }
+    public List<String> getJobDetailsByLabel(String label) {
+        List<String> values = new ArrayList<>();
+
+        for (WebElement card : getJobCards()) {
+            try {
+                // This finds the <strong> label (e.g., "Working pattern")
+                WebElement labelElement = card.findElement(By.xpath(".//strong[contains(text(),'" + label + "')]"));
+
+                // Now get the value that comes right after the label
+                WebElement valueElement = labelElement.findElement(By.xpath("./following-sibling::span[1]"));
+
+                String valueText = valueElement.getText().trim();
+                values.add(valueText);
+
+            } catch (NoSuchElementException e) {
+                System.out.println("Label not found in this card: " + label);
+                values.add("Not found");
+            }
+        }
+
+        return values;
+    }
+
 
 
 

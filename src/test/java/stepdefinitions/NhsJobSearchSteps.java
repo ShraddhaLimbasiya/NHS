@@ -7,11 +7,12 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.testng.Assert;
 import pages.NhsJobSearchPage;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static org.testng.Assert.*;
 
@@ -193,7 +194,21 @@ public class NhsJobSearchSteps extends Base{
 
         //nhsJobSearchPage.selectCheckBox(category);
         nhsJobSearchPage.selectCheckBox(category,label.toArray(new String[0]));
+
        // nhsJobSearchPage.selectCheckBox(category, "Full time", "Job-share");
 
+    }
+
+    @Then("I should see a list of job results that match my {string}")
+    public void iShouldSeeAListOfJobResultsThatMatchMyWokingPatterns(String label) {
+        Map<String, List<String>> filters = nhsJobSearchPage.getSelectedFilters();
+        List<String> expectedValues = filters.get(label);
+        List<String> actualValues = nhsJobSearchPage.getJobDetailsByLabel(label);
+
+        for (String actual : actualValues) {
+            boolean match = expectedValues.stream().anyMatch(
+                    expected -> actual.equalsIgnoreCase(expected));
+            Assert.assertTrue(match,"Unexpected value found: " );
+        }
     }
 }
