@@ -269,10 +269,8 @@ public class NhsJobSearchPage {
 
         for (WebElement card : getJobCards()) {
             try {
-                // This finds the <strong> label (e.g., "Working pattern")
                 WebElement labelElement = card.findElement(By.xpath(".//strong[contains(text(),'" + label + "')]"));
 
-                // Now get the value that comes right after the label
                 WebElement valueElement = labelElement.findElement(By.xpath("./following-sibling::span[1]"));
 
                 String valueText = valueElement.getText().trim();
