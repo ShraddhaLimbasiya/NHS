@@ -74,7 +74,6 @@ Feature: NHS Job Search functionality
     And I click the search button
     Then I should see a list of job results that match my preferences
 
-  @smoke
   Scenario: Filter job results by working pattern
     Given I am on the NHS Jobs search page
     When I enter "SW1A 1AA" in the Location field
@@ -93,7 +92,7 @@ Feature: NHS Job Search functionality
       | Voluntary |
       | Bank      |
     And I click the Apply filters button
-    Then I should see a list of job results that match my preferences
+    Then I should see a list of job results that match my "Contract type"
 
   Scenario: Filter job results by salary range
     Given I am on the NHS Jobs search page
@@ -102,7 +101,7 @@ Feature: NHS Job Search functionality
     And I select "Pay range":
       | 40000 |
     And I click the Apply filters button
-    Then I should see a list of job results that match my preferences
+    Then I should see a list of job results that match my "Pay range"
 
   Scenario: Filter job results by staff group
     Given I am on the NHS Jobs search page
@@ -112,7 +111,7 @@ Feature: NHS Job Search functionality
       | Nursing              |
       | Midwifery Registered |
     And I click the Apply filters button
-    Then I should see a list of job results that match my preferences
+    Then I should see a list of job results that match my "Staff group"
 
   Scenario: Filter job results by job reference number
     Given I am on the NHS Jobs search page
@@ -122,9 +121,9 @@ Feature: NHS Job Search functionality
       | Band 4 |
       | Band 5 |
     And I click the Apply filters button
-    Then I should see a list of job results that match my preferences
+    Then I should see a list of job results that match my "NHS pay grades and schemes"
 
-
+@smoke
   Scenario: Apply multiple filters and view refined job results
     Given I am on the NHS Jobs search page
     When I enter "SW1A 1AA" in the Location field
@@ -133,10 +132,9 @@ Feature: NHS Job Search functionality
       | Full time |
       | Part time |
     And I select "Contract type":
-      | Voluntary |
       | Bank      |
     And I select "Pay range":
-      | 40000 |
+      | £40,000 to £50,000 |
     And I select "Staff group":
       | Nursing              |
       | Midwifery Registered |

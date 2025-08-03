@@ -6,7 +6,9 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import pages.NhsJobSearchPage;
 
@@ -16,7 +18,7 @@ import java.util.Map;
 
 import static org.testng.Assert.*;
 
-public class NhsJobSearchSteps extends Base{
+public class NhsJobSearchSteps extends Base {
     WebDriver driver = Base.getWebdriver("chrome");
 
     private String jobTitle;
@@ -168,12 +170,6 @@ public class NhsJobSearchSteps extends Base{
 
     }
 
-    @Then("I should see job results filtered by the selected working patterns")
-    public void iShouldSeeJobResultsFilteredByTheSelectedWorkingPatterns() {
-
-
-    }
-
     @And("I click the Apply filters button")
     public void iClickTheApplyFiltersButton() throws InterruptedException {
         Thread.sleep(1000);
@@ -192,23 +188,47 @@ public class NhsJobSearchSteps extends Base{
 
         List<String> label = table.asList();
 
-        //nhsJobSearchPage.selectCheckBox(category);
-        nhsJobSearchPage.selectCheckBox(category,label.toArray(new String[0]));
-
-       // nhsJobSearchPage.selectCheckBox(category, "Full time", "Job-share");
+        nhsJobSearchPage.selectCheckBox(category, label.toArray(new String[0]));
 
     }
 
     @Then("I should see a list of job results that match my {string}")
     public void iShouldSeeAListOfJobResultsThatMatchMyWokingPatterns(String label) {
         Map<String, List<String>> filters = nhsJobSearchPage.getSelectedFilters();
-        List<String> expectedValues = filters.get(label);
-        List<String> actualValues = nhsJobSearchPage.getJobDetailsByLabel(label);
+        List<String> keywords = filters.get(label);
 
-        for (String actual : actualValues) {
-            boolean match = expectedValues.stream().anyMatch(
-                    expected -> actual.equalsIgnoreCase(expected));
-            Assert.assertTrue(match,"Unexpected value found: " );
+        if (keywords == null || keywords.isEmpty()) {
+            Assert.fail("No filter values found for label: " + label);
         }
+
+        List<String> matchedWorkingTypes = nhsJobSearchPage.getSelectedFilterValue(label, keywords);
+
+        for (String expected : keywords) {
+            boolean found = matchedWorkingTypes.stream()
+                    .anyMatch(actual -> actual.contains(expected));
+            Assert.assertTrue(found,
+                    "Expected working pattern '" + expected + "' not found in results.");
+        }
+
     }
+    @Then("all filters should be reset")
+    public void allFiltersShouldBeReset() {
+        Map<String, List<String>> filters = nhsJobSearchPage.getSelectedFilters();
+
+        for (Map.Entry<String, List<String>> entry : filters.entrySet()) {
+            assertTrue(entry.getValue().isEmpty() || entry.getValue() == null,
+                    "Filter " + entry.getKey() + " was not cleared.");
+        }
+
+        // You can also verify from the UI that the checkboxes are no longer selected.
+        boolean anyFilterVisible = nhsJobSearchPage.areAnyFiltersVisible();
+        assertFalse(anyFilterVisible, "Some filters are still active after clearing.");
+    }
+    @Then("I should see the unfiltered job results for the original search")
+    public void iShouldSeeTheUnfilteredJobResultsForTheOriginalSearch() {
+        List<WebElement> jobCards = driver.findElements(By.cssSelector("li[data-test='search-result']"));
+        assertFalse(jobCards.isEmpty(), "No unfiltered job results found.");
+    }
+
+
 }

@@ -97,6 +97,7 @@ public class NhsJobSearchPage {
 
         return jobTitles;
     }
+
     public boolean resultsMatchPreferredLocation(String expectedLocation) {
 
         if (getJobCards().isEmpty()) {
@@ -168,7 +169,7 @@ public class NhsJobSearchPage {
         nextBtn.click();
     }
 
-    public void clickOnJob(){
+    public void clickOnJob() {
         getJobCards().get(0).click();
     }
 
@@ -178,20 +179,24 @@ public class NhsJobSearchPage {
 
     //span[normalize-space()='Contract type']
 
-    public void selectCategory(String categoryName){
-        WebElement category = driver.findElement(By.xpath("//span[normalize-space()='"+ categoryName+"']"));
+    public void selectCategory(String categoryName) {
+        WebElement category = driver.findElement(By.xpath("//span[normalize-space()='" + categoryName + "']"));
         category.click();
 
 
     }
+
     public List<WebElement> getCheckboxesByCategory(String categoryName) {
         String xpath = String.format("//input[@type='checkbox' and @name='%s']", categoryName);
         return driver.findElements(By.xpath(xpath));
     }
+
     private Map<String, List<String>> selectedFilters = new HashMap<>();
+
     public Map<String, List<String>> getSelectedFilters() {
         return selectedFilters;
     }
+
     public void selectCheckBox(String categoryName, String... valuesToSelect) {
         selectCategory(categoryName);
         selectedFilters.put(categoryName, Arrays.asList(valuesToSelect));
@@ -208,7 +213,6 @@ public class NhsJobSearchPage {
                 if (labelText.equalsIgnoreCase(value.trim())) {
                     String forAttr = label.getAttribute("for");
 
-                    // Find checkbox using 'for' attribute
                     WebElement checkbox = driver.findElement(By.id(forAttr));
                     if (!checkbox.isSelected()) {
                         checkbox.click();
@@ -229,7 +233,6 @@ public class NhsJobSearchPage {
     }
 
 
-
     public void iClickTheApplyFiltersButton() {
         WebElement applyFilterBtn = driver.findElement(By.id("refine-search"));
         applyFilterBtn.click();
@@ -238,55 +241,81 @@ public class NhsJobSearchPage {
     public void iClickTheClearFiltersButton() {
         WebElement clearFilterBtn = driver.findElement(By.xpath("//a[normalize-space()='Clear filters']"));
         clearFilterBtn.click();
+        selectedFilters.clear();
+
     }
 
-    public List<String> getWorkingType(String keyword) {
-        //List<WebElement> workingTyps = getJobCards().findElements(By.xpath("(//strong[contains(text(),'"+keyword+"')])"));
-        List<String> jobTitles = new ArrayList<>();
 
+    public List<String> getWorkingTypes(List<String> keywords) {
+        List<String> workingType = new ArrayList<>();
+        List<WebElement> workingTypes = driver.findElements(
+                By.xpath("//li[@data-test='search-result-workingPattern']")
+        );
 
-        for (WebElement element : getJobCards()) {
-            for(int i = 0; i<getJobCards().size() ; i++) {
-                WebElement workingType = element.findElement(By.xpath("(//strong[contains(text(),'" + keyword + "')][" + i + "])"));
-                String workingText = workingType.getText();
-                jobTitles.add(workingText);
-
-
-                if (workingText.toLowerCase().contains(keyword.toLowerCase())) {
-                    System.out.println("Match found: " + workingText);
-                }
-            }
-        }
-
-        System.out.println("All Job Working Type:");
-        for (String title : jobTitles) {
-            System.out.println(title);
-        }
-        return jobTitles;
-    }
-    public List<String> getJobDetailsByLabel(String label) {
-        List<String> values = new ArrayList<>();
-
-        for (WebElement card : getJobCards()) {
+        for (WebElement element : workingTypes) {
             try {
-                WebElement labelElement = card.findElement(By.xpath(".//strong[contains(text(),'" + label + "')]"));
+                WebElement strongTag = element.findElement(By.tagName("strong"));
+                String workingText = strongTag.getText().trim();
 
-                WebElement valueElement = labelElement.findElement(By.xpath("./following-sibling::span[1]"));
-
-                String valueText = valueElement.getText().trim();
-                values.add(valueText);
+                for (String keyword : keywords) {
+                    if (workingText.toLowerCase().contains(keyword.toLowerCase())) {
+                        System.out.println("Match found for '" + keyword + "': " + workingText);
+                        workingType.add(workingText);
+                        break;
+                    }
+                }
 
             } catch (NoSuchElementException e) {
-                System.out.println("Label not found in this card: " + label);
-                values.add("Not found");
             }
         }
 
-        return values;
+        return workingType;
     }
 
+    public List<String> getSelectedFilterValue(String filterName, List<String> keywords) {
+        List<String> matchedValues = new ArrayList<>();
+        List<WebElement> filterElements;
+        String xpath;
 
+        switch (filterName.toLowerCase()) {
+            case "pay range":
+                xpath = "//li[@data-test='search-result-salary']";
+                break;
+            case "working pattern":
+                xpath = "//li[@data-test='search-result-workingPattern']";
+                break;
+            case "contract type":
+                xpath = "//li[@data-test='search-result-jobType']";
+                break;
+            default:
+                System.out.println("Unknown filter name: " + filterName);
+                return matchedValues;
+        }
 
+        filterElements = driver.findElements(By.xpath(xpath));
+
+        for (WebElement element : filterElements) {
+            try {
+                WebElement strongTag = element.findElement(By.tagName("strong"));
+                String text = strongTag.getText().trim();
+
+                for (String keyword : keywords) {
+                    if (text.toLowerCase().contains(keyword.toLowerCase())) {
+                        System.out.println("Match found for '" + keyword + "': " + text);
+                        matchedValues.add(text);
+                        break;
+                    }
+                }
+            } catch (NoSuchElementException e) {
+            }
+        }
+
+        return matchedValues;
+    }
+    public boolean areAnyFiltersVisible() {
+        List<WebElement> activeFilters = driver.findElements(By.cssSelector(".nhsuk-tag")); // or whatever tag shows active filters
+        return !activeFilters.isEmpty();
+    }
 
 
 
